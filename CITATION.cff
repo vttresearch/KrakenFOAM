@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "KrakenFOAM: OpenFOAM coupling for the Kraken framework"
+abstract: >-
+  OpenFOAM library and solvers for coupling OpenFOAM to VTT's Kraken
+  computational framework through the Cerberus multiphysics driver.
+type: software
+authors:
+  - family-names: Tuominen
+    given-names: Riku
+    email: riku.tuominen@vtt.fi
+    affiliation: "VTT Technical Research Centre of Finland Ltd"
+  - family-names: Laurila
+    given-names: Erkki
+    email: erkki.laurila@vtt.fi
+    affiliation: "VTT Technical Research Centre of Finland Ltd"
+repository-code: "https://github.com/vttresearch/KrakenFOAM"
+url: "https://serpent.vtt.fi/kraken/index.php?title=Main_Page"
+license: GPL-3.0-or-later
+keywords:
+  - OpenFOAM
+  - Kraken
+  - Cerberus
+  - multiphysics
+  - coupling
+  - nuclear reactor

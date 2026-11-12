@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      physicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// fuel = aluminium
+// cladding = 316 stainless steel
+
+thermoType          constSolidThermo;
+
+rho
+{
+    type        zonal;
+    value       7990;
+    zones
+    {
+        cladding    7990;
+        fuel        2700;
+    }
+}
+
+Cv
+{
+    type        zonal;
+    value       500;
+    zones
+    {
+        cladding    500;
+        fuel        900;
+    }
+}
+
+kappa
+{
+    type        zonal;
+    value       16.3;
+    zones
+    {
+        cladding    16.3;
+        fuel        200;
+    }
+}
+
+
+// ************************************************************************* //

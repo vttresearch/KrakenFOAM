@@ -1,0 +1,9 @@
+EXE_INC = \
+    -I$(FOAM_SOLVERS)/foamMultiRun/regionSolvers \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../../src/krakenIO/lnInclude
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -L$(FOAM_USER_LIBBIN) \
+    -lkrakenIO

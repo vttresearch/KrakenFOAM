@@ -1,0 +1,32 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvConstraints;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+core
+{
+    type            krakenFixedTemperatureConstraint;
+    libs            ("libkrakenIO.so");
+
+    cellZone        all;
+
+    inputPhase      solid;
+    outputPhases    (gas liquid);
+
+    points
+    (
+        #include "${FOAM_CASE}/all_cell_centres"
+    );
+}
+
+// ************************************************************************* //

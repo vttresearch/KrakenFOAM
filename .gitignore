@@ -1,0 +1,25 @@
+# Build output
+lnInclude/
+linux64*/
+Make/darwin*/
+*.o
+*.so
+*.dep
+
+# Editors
+.vscode/
+.idea/
+*~
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+
+# Run-time output of tutorial cases
+wrk_*
+processor*
+log.*
+postProcessing/
+cellProc
+decomposeParDict

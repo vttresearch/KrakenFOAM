@@ -1,0 +1,8 @@
+clientIO.c
+krakenIO.C
+krakenModelBase.C
+krakenScalarFieldSource.C
+krakenMappedScalarFieldSource.C
+krakenFixedTemperatureConstraint.C
+
+LIB = $(FOAM_USER_LIBBIN)/libkrakenIO

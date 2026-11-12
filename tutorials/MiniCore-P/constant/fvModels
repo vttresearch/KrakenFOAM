@@ -1,0 +1,122 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+core
+{
+    type            krakenMappedScalarFieldSource;
+    libs            ("libkrakenIO.so");
+
+    cellZone        all;
+
+    inputPhase      solid;
+    outputPhases    (gas liquid);
+
+    points
+    (
+        #include "${FOAM_CASE}/all_cell_centres"
+    );
+}
+
+phaseTurbulenceStabilisationGas
+{
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   gas;
+
+    alphaInversion  0.1;
+}
+
+phaseTurbulenceStabilisationLiquid
+{
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   liquid;
+
+    alphaInversion  0.1;
+}
+
+heatTransferLimitedPhaseChange
+{
+    type            heatTransferLimitedPhaseChange;
+    libs            ("libmultiphaseEulerFvModels.so");
+
+    phases          (liquid gas);
+
+    energySemiImplicit yes;
+    pressureImplicit yes;
+
+    saturationTemperature
+    {
+        type            function1;
+        function
+        {
+            type            table;
+            format          csv;
+            nHeaderLine     1;
+            units           ([bar] [K]);
+            columns         (1 0);
+            mergeSeparators no;
+            file            "constant/water_sat.txt";
+            outOfBounds     clamp;
+            interpolationScheme linear;
+        }
+    }
+}
+
+solidSurfaceBoiling
+{
+    type            phaseSurfaceBoiling;
+
+    libs            ("libmultiphaseEulerFvModels.so");
+
+    phase           solid;
+    phases          (liquid gas);
+
+    energySemiImplicit no;
+
+    saturationTemperature
+    {
+        $../../heatTransferLimitedPhaseChange/saturationTemperature;
+    }
+
+    partitioningModel
+    {
+        type            Lavieville;
+        alphaCrit       0.2;
+    }
+
+    nucleationSiteModel
+    {
+        type            LemmertChawla;
+    }
+
+    departureDiameterModel
+    {
+        type            TolubinskiKostanchuk;
+    }
+
+    departureFrequencyModel
+    {
+        type            Cole;
+        Cf              1.18;
+    }
+}
+
+// ************************************************************************* //

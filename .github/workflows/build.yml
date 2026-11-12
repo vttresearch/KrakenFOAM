@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install OpenFOAM 13
+        run: |
+          sudo sh -c "wget -O - https://dl.openfoam.org/gpg.key > /etc/apt/trusted.gpg.d/openfoam.asc"
+          sudo add-apt-repository http://dl.openfoam.org/ubuntu
+          sudo apt-get update
+          sudo apt-get -y install openfoam13
+
+      - name: Build
+        shell: bash
+        run: |
+          source /opt/openfoam13/etc/bashrc || true
+          ./Allwmake -j 2>&1 | tee log.Allwmake
+          test -f "$FOAM_USER_LIBBIN/libkrakenIO.so"
+          test -x "$FOAM_USER_APPBIN/krakenRun"
+          test -x "$FOAM_USER_APPBIN/krakenMultiRun"
+
+      - name: Check for compiler warnings
+        shell: bash
+        run: |
+          if grep -E "warning:|error:" log.Allwmake; then
+            exit 1
+          fi

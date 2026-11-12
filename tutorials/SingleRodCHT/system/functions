@@ -1,0 +1,201 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+time
+{
+    type            time;
+    libs            ("libutilityFunctionObjects.so");
+    region          fluid;
+    writeControl    timeStep;
+    writeInterval   1;
+}
+
+deltaT
+{
+    type            timeStep;
+    libs            ("libutilityFunctionObjects.so");
+    region          fluid;
+    writeControl    timeStep;
+    writeInterval   1;
+}
+
+residuals.fluid
+{
+    type            residuals;
+    libs            ("libutilityFunctionObjects.so");
+    region          fluid;
+    writeControl    timeStep;
+    writeInterval   1;
+
+    fields          (p h U);
+    writeResidualFields no;
+}
+
+residuals.solid
+{
+    type            residuals;
+    libs            ("libutilityFunctionObjects.so");
+    region          solid;
+    writeControl    timeStep;
+    writeInterval   1;
+
+    fields          (e);
+    writeResidualFields no;
+}
+
+#includeFunc cellMinMag
+(
+    name=fieldMin.fluid,
+    region=fluid,
+    p, T, U,
+    log=true
+)
+
+#includeFunc cellMaxMag
+(
+    name=fieldMax.fluid,
+    region=fluid,
+    p, T, U,
+    log=true
+)
+
+#includeFunc yPlus
+(
+    name=yPlus,
+    region=fluid,
+    log=false
+)
+
+#includeFunc wallHeatFlux
+(
+    name=heatFlux,
+    region=solid
+)
+
+cutPlanes.fluid
+{
+    type                surfaces;
+    libs                ("libsampling.so");
+    region              fluid;
+    writeControl        writeTime;
+    interpolationScheme cellPoint;
+    surfaceFormat       vtk;
+    writeFormat         binary;
+
+    fields
+    (
+        T U p
+        nut k omega alphat
+        rho
+    );
+
+    surfaces
+    (
+        side.fluid
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0 0);
+                normal  (1 0 0);
+            }
+            interpolate     false;
+        }
+        mid.fluid
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0 0.1);
+                normal  (0 0 1);
+            }
+            interpolate     false;
+        }
+    );
+}
+
+cutPlanes.solid
+{
+    type                surfaces;
+    libs                ("libsampling.so");
+    region              solid;
+    writeControl        writeTime;
+    interpolationScheme cellPoint;
+    surfaceFormat       vtk;
+    writeFormat         binary;
+
+    fields              (T);
+
+    surfaces
+    (
+        side.solid
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0 0);
+                normal  (1 0 0);
+            }
+            interpolate     false;
+        }
+        mid.solid
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0 0.1);
+                normal  (0 0 1);
+            }
+            interpolate     false;
+        }
+    );
+}
+
+T.fluid
+{
+    type                volFieldValue;
+    libs                ("libfieldFunctionObjects.so");
+    region              fluid;
+    log                 false;
+    writeFields         false;
+    cellZone            all;
+    operation           volAverage;
+    fields
+    (
+        T
+    );
+}
+
+T.solid
+{
+    type                volFieldValue;
+    libs                ("libfieldFunctionObjects.so");
+    region              solid;
+    log                 false;
+    writeFields         false;
+    cellZone            all;
+    operation           volAverage;
+    fields
+    (
+        T
+    );
+}
+
+
+// ************************************************************************* //

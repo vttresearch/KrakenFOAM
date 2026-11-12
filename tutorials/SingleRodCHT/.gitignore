@@ -1,0 +1,5 @@
+case.foam
+constant/fluid/fvMesh/*
+constant/fluid/polyMesh/*
+constant/solid/fvMesh/*
+constant/solid/polyMesh/*

@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+echo "Cleaning $PWD case"
+
+zeros=""
+while [ ${#zeros} -lt 8 ]
+do
+    timeDir="0.${zeros}[1-9]*"
+    rm -rf ./${timeDir} ./-${timeDir} > /dev/null 2>&1
+    zeros="0$zeros"
+done
+
+rm -rf ./[1-9]* ./-[1-9]* ./log ./log.* ./logSummary.*
+rm -rf processor*
+rm -rf postProcessing
+rm -rf wrk_OF
+rm -f constant/polyMesh/cellProc
+
+find . -name "*.orig" -type f -exec sh -c 'rm -f ${0%.*} ${0%.*}.gz' {} \;
+
+#------------------------------------------------------------------------------

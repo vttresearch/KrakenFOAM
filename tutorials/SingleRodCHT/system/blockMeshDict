@@ -1,0 +1,129 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  13
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+backgroundMesh
+{
+    xMin    -1;
+    xMax     1;
+    yMin    -1;
+    yMax     1;
+    zMin     0;
+    zMax    10;
+    xCells   8;
+    yCells   8;
+    zCells  20;
+}
+
+convertToMeters 0.02;
+
+vertices
+(
+    ($!backgroundMesh/xMin $!backgroundMesh/yMin $!backgroundMesh/zMin)
+    ($!backgroundMesh/xMax $!backgroundMesh/yMin $!backgroundMesh/zMin)
+    ($!backgroundMesh/xMax $!backgroundMesh/yMax $!backgroundMesh/zMin)
+    ($!backgroundMesh/xMin $!backgroundMesh/yMax $!backgroundMesh/zMin)
+
+    ($!backgroundMesh/xMin $!backgroundMesh/yMin $!backgroundMesh/zMax)
+    ($!backgroundMesh/xMax $!backgroundMesh/yMin $!backgroundMesh/zMax)
+    ($!backgroundMesh/xMax $!backgroundMesh/yMax $!backgroundMesh/zMax)
+    ($!backgroundMesh/xMin $!backgroundMesh/yMax $!backgroundMesh/zMax)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7)
+    (
+        $!backgroundMesh/xCells
+        $!backgroundMesh/yCells
+        $!backgroundMesh/zCells
+    )
+    simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+defaultPatch
+{
+    name background;
+    type internal;
+}
+
+boundary
+(
+    cyclic_left
+    {
+        type            cyclic;
+        neighbourPatch  cyclic_right;
+        faces
+        (
+            (0 3 7 4)
+        );
+    }
+
+    cyclic_right
+    {
+        type            cyclic;
+        neighbourPatch  cyclic_left;
+        faces
+        (
+            (1 5 6 2)
+        );
+    }
+
+    inlet_bottom
+    {
+        type patch;
+        faces
+        (
+            (0 1 2 3)
+        );
+    }
+
+    outlet_top
+    {
+        type patch;
+        faces
+        (
+            (4 7 6 5)
+        );
+    }
+
+    cyclic_back
+    {
+        type            cyclic;
+        neighbourPatch  cyclic_front;
+        faces
+        (
+            (0 4 5 1)
+        );
+    }
+
+    cyclic_front
+    {
+        type            cyclic;
+        neighbourPatch  cyclic_back;
+        faces
+        (
+            (3 2 6 7)
+        );
+    }
+);
+
+mergePatchPairs
+();
+
+// ************************************************************************* //

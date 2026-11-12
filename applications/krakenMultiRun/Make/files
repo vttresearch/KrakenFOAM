@@ -1,0 +1,5 @@
+$(FOAM_SOLVERS)/foamMultiRun/regionSolvers/regionSolvers.C
+setDeltaT.C
+krakenMultiRun.C
+
+EXE = $(FOAM_USER_APPBIN)/krakenMultiRun
